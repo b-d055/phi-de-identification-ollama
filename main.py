@@ -180,25 +180,23 @@ def main():
     patient_charts = os.listdir("patient_charts")
     print("Patient Charts:")
     print("-" * 50)
-    # run 5 times for each chart to see how the PHI mappings change/consistency
-    for i in range(5):
-        for chart_name in patient_charts:
-            print(chart_name)
-            sample_text = open(f"patient_charts/{chart_name}", encoding='utf-8').read()
+    for chart_name in patient_charts:
+        print(chart_name)
+        sample_text = open(f"patient_charts/{chart_name}", encoding='utf-8').read()
 
-            deidentified_text, phi_mappings = process_document(sample_text, '\n---\n')
+        deidentified_text, phi_mappings = process_document(sample_text, '\n---\n')
 
-            # count how many times each PHI element appears in the text
-            phi_counts = {phi: len(re.findall(re.escape(phi), deidentified_text)) for phi in phi_mappings.values()}
-            
-            # write this to files
-            timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-            with open(f"outputs/{chart_name}_{timestamp}_deidentified_text.txt", "w") as f:
-                f.write(deidentified_text)
-            with open(f"outputs/{chart_name}_{timestamp}_phi_mappings.json", "w") as f:
-                json.dump(phi_mappings, f, indent=2)
-            with open(f"outputs/{chart_name}_{timestamp}_phi_counts.json", "w") as f:
-                json.dump(phi_counts, f, indent=2)
+        # count how many times each PHI element appears in the text
+        phi_counts = {phi: len(re.findall(re.escape(phi), deidentified_text)) for phi in phi_mappings.values()}
+        
+        # write this to files
+        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        with open(f"outputs/{chart_name}_{timestamp}_deidentified_text.txt", "w") as f:
+            f.write(deidentified_text)
+        with open(f"outputs/{chart_name}_{timestamp}_phi_mappings.json", "w") as f:
+            json.dump(phi_mappings, f, indent=2)
+        with open(f"outputs/{chart_name}_{timestamp}_phi_counts.json", "w") as f:
+            json.dump(phi_counts, f, indent=2)
 
 if __name__ == "__main__":
     main()
